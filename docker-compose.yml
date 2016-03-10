@@ -1,24 +1,31 @@
-worker_first:
-    build: .
-    volumes:
-      - .:/code
-    dockerfile: Dockerfile_worker
-    command: First
+version: '2'
 
-worker_second:
-    build: .
-    volumes:
-      - .:/code
-    dockerfile: Dockerfile_worker
-    command: Second
+services:
 
-gateway:
-    build: .
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile_gateway
     volumes:
       - .:/code
-    dockerfile: Dockerfile_gateway
     links:
      - worker_first:first
      - worker_second:second
     ports:
      - "2345:2345"
+
+  worker_first:
+    build:
+      context: .
+      dockerfile: Dockerfile_worker
+    volumes:
+      - .:/code
+    command: First
+
+  worker_second:
+    build:
+      context: .
+      dockerfile: Dockerfile_worker
+    volumes:
+      - .:/code
+    command: Second
